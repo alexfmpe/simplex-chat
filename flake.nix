@@ -655,19 +655,21 @@
         # build all packages in hydra.
         hydraJobs = packages;
 
-        devShell = let
-	updateCmd = pkgs.writeShellApplication {
-          name = "update-sha256map";
-          runtimeInputs = [ pkgs.nix-prefetch-git pkgs.jq pkgs.gawk ];
-          text = ''
-            gawk -f ./scripts/nix/update-sha256.awk cabal.project > ./scripts/nix/sha256map.nix
-          '';
-        }; in
-	pkgs.mkShell {
-          buildInputs = [ updateCmd ];
-          shellHook = ''
-            echo "welcome to the shell!"
-          '';
+        devShell = (drv pkgs).shellFor {
+          # Default value, probably not what we want because it lets cabal inside the shell
+          # build packages outside of nix. Enabling currently leads to
+          #   [__2] unknown package: wai-app-static
+          # Might need to remove wai overrides:
+          #   https://github.com/input-output-hk/haskell.nix/issues/1637
+          exactDeps = false;
+
+          buildInputs = [ mac2ios.packages.${system}.mac2ios ];
+
+          tools = {
+            cabal = "latest"; # Builds cabal-install. Shouldn't it be cached by normal build?
+            haskell-language-server = "latest";
+          };
+          withHoogle = false; # Otherwise rebuilds a ton of deps, including GHC 8.10/9.2 for some reason?
         };
       }
     );
