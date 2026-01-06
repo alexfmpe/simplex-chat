@@ -36,7 +36,7 @@ mv libHSsimplex-chat-*-inplace-ghc${GHC_VERSION}.so libsimplex.so 2> /dev/null |
 patchelf --replace-needed "libffi.so.7" "libffi.so.8" libsimplex.so
 
 mkdir deps 2> /dev/null || true
-ldd libsimplex.so | grep "ghc" | cut -d' ' -f 3 | xargs -I {} cp {} ./deps/
+ldd libsimplex.so | grep "ghc" | cut -d' ' -f 3 | xargs -I {} cp -f {} ./deps/
 
 cd -
 

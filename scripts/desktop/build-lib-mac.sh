@@ -24,7 +24,7 @@ exports=( $(sed 's/foreign export ccall "chat_migrate_init_key"//' src/Simplex/C
 for elem in "${exports[@]}"; do count=$(grep -R "$elem$" libsimplex.dll.def | wc -l); if [ $count -ne 1 ]; then echo Wrong exports in libsimplex.dll.def. Add \"$elem\" to that file; exit 1; fi ; done
 for elem in "${exports[@]}"; do count=$(grep -R "\"$elem\"" flake.nix | wc -l); if [ $count -ne 2 ]; then echo Wrong exports in flake.nix. Add \"$elem\" in two places of the file; exit 1; fi ; done
 
-rm -rf $BUILD_DIR
+# rm -rf $BUILD_DIR
 
 if [[ "$DATABASE_BACKEND" == "postgres" ]]; then
     echo "Building with postgres backend..."
@@ -70,7 +70,7 @@ function copy_deps() {
 	local NON_FINAL_RPATHS=`otool -l $LIB | grep "path "| cut -d' ' -f11`
 	local RPATHS=`otool -l $LIB | grep "path "| cut -d' ' -f11 | sed "s|@loader_path/..|$GHC_LIBS_DIR|"`
 
-	cp $LIB ./deps
+	cp -f $LIB ./deps
     if [[ "$NON_FINAL_RPATHS" == *"@loader_path/.."* ]]; then
         # Need to point the lib to @loader_path instead
 		install_name_tool -add_rpath @loader_path ./deps/`basename $LIB`
@@ -94,7 +94,7 @@ function copy_deps() {
 
 copy_deps $LIB
 # Special case
-cp $(ghc --print-libdir)/$ARCH-osx-ghc-$GHC_VERSION/libHSghc-boot-th-$GHC_VERSION-ghc$GHC_VERSION.dylib deps
+cp -f $(ghc --print-libdir)/$ARCH-osx-ghc-$GHC_VERSION/libHSghc-boot-th-$GHC_VERSION-ghc$GHC_VERSION.dylib deps
 rm deps/`basename $LIB`
 
 cd -
