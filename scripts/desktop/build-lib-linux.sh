@@ -46,7 +46,7 @@ rm -rf apps/multiplatform/desktop/build/cmake
 mkdir -p apps/multiplatform/common/src/commonMain/cpp/desktop/libs/$OS-$ARCH/
 cp -r $BUILD_DIR/build/deps/* apps/multiplatform/common/src/commonMain/cpp/desktop/libs/$OS-$ARCH/
 cp $BUILD_DIR/build/libsimplex.so apps/multiplatform/common/src/commonMain/cpp/desktop/libs/$OS-$ARCH/
-scripts/desktop/prepare-vlc-linux.sh
+# scripts/desktop/prepare-vlc-linux.sh
 
 links_dir=apps/multiplatform/build/links
 mkdir -p $links_dir
